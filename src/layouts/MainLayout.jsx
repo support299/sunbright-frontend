@@ -18,7 +18,7 @@ const navItems = [
 
 function MainLayout() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground ">
       <aside className="border-b border-border bg-card/40">
         <nav className="mx-auto flex max-w-[1400px] flex-wrap gap-2 px-4 py-3 sm:px-6 lg:px-8">
           {navItems.map((item) => (
