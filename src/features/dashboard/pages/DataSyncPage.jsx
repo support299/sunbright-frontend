@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { normalizeAuthUser } from "../../../store/authSlice";
 import { useGetSyncStatusQuery, useTriggerSyncMutation } from "../api/dashboardApi";
 
 function Pill({ children, tone = "default" }) {
@@ -26,9 +27,10 @@ function Pill({ children, tone = "default" }) {
 
 export default function DataSyncPage() {
   const user = useSelector((s) => s.auth.user);
-  const isStaff = Boolean(user?.isStaff);
+  const normalized = normalizeAuthUser(user);
+  const isAdmin = normalized?.role === "admin" || Boolean(normalized?.isStaff);
 
-  const { data: statusRes, refetch } = useGetSyncStatusQuery(undefined, { skip: !isStaff });
+  const { data: statusRes, refetch } = useGetSyncStatusQuery(undefined, { skip: !isAdmin });
   const [confirmSync, setConfirmSync] = useState(false);
   const [triggerSync, { isLoading: syncing }] = useTriggerSyncMutation();
 
@@ -45,7 +47,7 @@ export default function DataSyncPage() {
     refetch();
   };
 
-  if (!isStaff) {
+  if (!isAdmin) {
     return (
       <div className="space-y-6">
         <div>

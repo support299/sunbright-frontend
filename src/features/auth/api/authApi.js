@@ -6,7 +6,11 @@ export const authApi = apiSlice.injectEndpoints({
       query: (body) => ({ url: "/auth/login/", method: "POST", body }),
       invalidatesTags: ["Auth"],
     }),
+    googleLogin: builder.mutation({
+      query: (body) => ({ url: "/auth/google/", method: "POST", body }),
+      invalidatesTags: ["Auth"],
+    }),
   }),
 });
 
-export const { useLoginMutation } = authApi;
+export const { useLoginMutation, useGoogleLoginMutation } = authApi;
