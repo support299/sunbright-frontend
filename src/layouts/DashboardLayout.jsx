@@ -13,6 +13,7 @@ import {
   Sparkles,
   Sun,
   Target,
+  UserCog,
   Users,
   XCircle,
 } from "lucide-react";
@@ -27,7 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { cn } from "../lib/utils";
-import { clearCredentials } from "../store/authSlice";
+import { clearCredentials, normalizeAuthUser } from "../store/authSlice";
 
 const SIDEBAR_COLLAPSED_KEY = "sunbright-sidebar-collapsed";
 
@@ -43,7 +44,8 @@ const menuItems = [
   { icon: Heart, label: "Customer Experience", path: "/customer-experience" },
   { icon: Target, label: "Manager Performance", path: "/manager-performance" },
   { icon: AlertCircle, label: "Outcome Pending", path: "/outcome-pending" },
-  { icon: Brain, label: "AI Insights", path: "/ai-insights" },
+  { icon: Brain, label: "AI Insights", path: "/ai-insights", adminOnly: true },
+  { icon: UserCog, label: "Users & roles", path: "/users", adminOnly: true },
   { icon: RefreshCw, label: "Data Sync", path: "/data-sync", adminOnly: true },
 ];
 
@@ -51,7 +53,8 @@ function DashboardLayout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((s) => s.auth.user);
-  const isStaff = Boolean(user?.isStaff);
+  const normalized = normalizeAuthUser(user);
+  const isAdmin = normalized?.role === "admin" || Boolean(normalized?.isStaff);
 
   const [collapsed, setCollapsed] = useState(() =>
     typeof window !== "undefined" ? localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1" : false
@@ -65,7 +68,7 @@ function DashboardLayout() {
     setCollapsed((c) => !c);
   }, []);
 
-  const visibleNav = menuItems.filter((item) => !item.adminOnly || isStaff);
+  const visibleNav = menuItems.filter((item) => !item.adminOnly || isAdmin);
 
   const logout = () => {
     dispatch(clearCredentials());
@@ -158,7 +161,7 @@ function DashboardLayout() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium leading-none text-foreground">{displayName}</p>
                     <p className="mt-1.5 truncate text-xs text-muted-foreground">
-                      {displayEmail || (isStaff ? "Administrator" : "User")}
+                      {displayEmail || (isAdmin ? "Administrator" : "Team member")}
                     </p>
                   </div>
                 ) : null}
@@ -188,6 +191,36 @@ function DashboardLayout() {
         </header>
         <main className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
           <div className="mx-auto max-w-[1400px]">
+            {normalized?.dataScope?.restricted ? (
+              <div
+                className={cn(
+                  "mb-4 rounded-lg border px-3 py-2.5 text-sm",
+                  normalized.dataScope.scopeKind === "unset"
+                    ? "border-amber-500/40 bg-amber-500/10 text-amber-950 dark:text-amber-100"
+                    : "border-primary/25 bg-primary/5 text-foreground"
+                )}
+                role="status"
+              >
+                {normalized.dataScope.scopeKind === "unset" ? (
+                  <>
+                    <span className="font-medium">No data scope assigned.</span>{" "}
+                    <span className="text-muted-foreground">
+                      Ask an administrator to set your team or rep under Users &amp; roles — metrics will stay empty
+                      until then.
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="font-medium">Filtered view:</span>{" "}
+                    <span className="text-muted-foreground">{normalized.dataScope.label}</span>
+                    {" · "}
+                    <span className="text-muted-foreground">
+                      Customer Experience totals are limited for scoped accounts until CX rows include team/rep fields.
+                    </span>
+                  </>
+                )}
+              </div>
+            ) : null}
             <Outlet />
           </div>
         </main>

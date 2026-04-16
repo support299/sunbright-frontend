@@ -15,6 +15,7 @@ import PipelinePage from "./features/dashboard/pages/PipelinePage";
 import RepPerformancePage from "./features/dashboard/pages/RepPerformancePage";
 import RetentionPage from "./features/dashboard/pages/RetentionPage";
 import TeamPerformancePage from "./features/dashboard/pages/TeamPerformancePage";
+import UsersRolesPage from "./features/users/pages/UsersRolesPage";
 import DashboardLayout from "./layouts/DashboardLayout";
 
 function App() {
@@ -33,8 +34,30 @@ function App() {
         <Route path="/customer-experience" element={<ProtectedRoute><CustomerExperiencePage /></ProtectedRoute>} />
         <Route path="/manager-performance" element={<ProtectedRoute><ManagerPerformancePage /></ProtectedRoute>} />
         <Route path="/outcome-pending" element={<ProtectedRoute><OutcomePendingPage /></ProtectedRoute>} />
-        <Route path="/ai-insights" element={<ProtectedRoute><AIInsightsPage /></ProtectedRoute>} />
-        <Route path="/data-sync" element={<ProtectedRoute><DataSyncPage /></ProtectedRoute>} />
+        <Route
+          path="/ai-insights"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AIInsightsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/data-sync"
+          element={
+            <ProtectedRoute requireAdmin>
+              <DataSyncPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute requireAdmin>
+              <UsersRolesPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/404" element={<NotFoundPage />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Route>

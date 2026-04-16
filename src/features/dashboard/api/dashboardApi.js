@@ -51,7 +51,13 @@ export const dashboardApi = apiSlice.injectEndpoints({
       query: (filterParams) => dashboardQueryUrl("/manager/", filterParams),
       providesTags: ["Dashboard"],
     }),
-    generateInsights: builder.mutation({ query: (body) => ({ url: "/insights/generate/", method: "POST", body }) }),
+    generateInsights: builder.mutation({
+      query: (body) => ({
+        url: "/insights/generate/",
+        method: "POST",
+        body: body && typeof body === "object" ? body : {},
+      }),
+    }),
     getSyncStatus: builder.query({ query: () => "/sync/", providesTags: ["Dashboard"] }),
     triggerSync: builder.mutation({ query: () => ({ url: "/sync/", method: "POST" }), invalidatesTags: ["Dashboard"] }),
   }),

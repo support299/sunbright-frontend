@@ -2,11 +2,17 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const USER_STORAGE_KEY = "sunbrightUser";
 
+export function normalizeAuthUser(user) {
+  if (user == null || typeof user !== "object") return null;
+  const role = user.role ?? (user.isStaff ? "admin" : "user");
+  return { ...user, role };
+}
+
 function readStoredUser() {
   try {
     const raw = localStorage.getItem(USER_STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw);
+    return normalizeAuthUser(JSON.parse(raw));
   } catch {
     return null;
   }
@@ -26,7 +32,7 @@ const authSlice = createSlice({
       const { access, refresh, user } = action.payload;
       state.accessToken = access;
       state.refreshToken = refresh;
-      const nextUser = user !== undefined ? user : state.user;
+      const nextUser = user !== undefined ? normalizeAuthUser(user) : state.user;
       state.user = nextUser ?? null;
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
