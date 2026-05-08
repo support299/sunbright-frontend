@@ -15,12 +15,13 @@ import {
   Target,
   UserCog,
   Users,
+  UsersRound,
   XCircle,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import DateRangeFilter from "../components/layout/DateRangeFilter";
+import FiltersBar from "../components/layout/FiltersBar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,7 +34,8 @@ import { clearCredentials, normalizeAuthUser } from "../store/authSlice";
 const SIDEBAR_COLLAPSED_KEY = "sunbright-sidebar-collapsed";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Executive Overview", path: "/" },
+  { icon: LayoutDashboard, label: "Master Dashboard", path: "/" },
+  { icon: LayoutDashboard, label: "Executive Overview", path: "/executive-overview" },
   { icon: Sparkles, label: "Clean Deals", path: "/clean-deals" },
   { icon: ShieldAlert, label: "Retention", path: "/retention" },
   { icon: Users, label: "Rep Performance", path: "/rep-performance" },
@@ -43,6 +45,7 @@ const menuItems = [
   { icon: XCircle, label: "Cancellations", path: "/cancellations" },
   { icon: Heart, label: "Customer Experience", path: "/customer-experience" },
   { icon: Target, label: "Manager Performance", path: "/manager-performance" },
+  { icon: UsersRound, label: "Setters & closers", path: "/role-performance" },
   { icon: AlertCircle, label: "Outcome Pending", path: "/outcome-pending" },
   { icon: Brain, label: "AI Insights", path: "/ai-insights", adminOnly: true },
   { icon: UserCog, label: "Users & roles", path: "/users", adminOnly: true },
@@ -187,7 +190,7 @@ function DashboardLayout() {
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col border-l border-border bg-background">
         <header className="sticky top-0 z-20 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-6">
-          <DateRangeFilter />
+          <FiltersBar />
         </header>
         <main className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
           <div className="mx-auto max-w-[1400px]">

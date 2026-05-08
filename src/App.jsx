@@ -8,6 +8,8 @@ import CustomerExperiencePage from "./features/dashboard/pages/CustomerExperienc
 import DataSyncPage from "./features/dashboard/pages/DataSyncPage";
 import HomePage from "./features/dashboard/pages/HomePage";
 import ManagerPerformancePage from "./features/dashboard/pages/ManagerPerformancePage";
+import RolePerformancePage from "./features/dashboard/pages/RolePerformancePage";
+import MasterDashboardPage from "./features/dashboard/pages/MasterDashboardPage";
 import NotFoundPage from "./features/dashboard/pages/NotFoundPage";
 import OnHoldPage from "./features/dashboard/pages/OnHoldPage";
 import OutcomePendingPage from "./features/dashboard/pages/OutcomePendingPage";
@@ -23,7 +25,8 @@ function App() {
     <Routes>
       <Route path="/auth/login" element={<LoginPage />} />
       <Route element={<DashboardLayout />}>
-        <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/" element={<ProtectedRoute><MasterDashboardPage /></ProtectedRoute>} />
+        <Route path="/executive-overview" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path="/clean-deals" element={<ProtectedRoute><CleanDealsPage /></ProtectedRoute>} />
         <Route path="/retention" element={<ProtectedRoute><RetentionPage /></ProtectedRoute>} />
         <Route path="/rep-performance" element={<ProtectedRoute><RepPerformancePage /></ProtectedRoute>} />
@@ -33,6 +36,7 @@ function App() {
         <Route path="/cancellations" element={<ProtectedRoute><CancellationsPage /></ProtectedRoute>} />
         <Route path="/customer-experience" element={<ProtectedRoute><CustomerExperiencePage /></ProtectedRoute>} />
         <Route path="/manager-performance" element={<ProtectedRoute><ManagerPerformancePage /></ProtectedRoute>} />
+        <Route path="/role-performance" element={<ProtectedRoute><RolePerformancePage /></ProtectedRoute>} />
         <Route path="/outcome-pending" element={<ProtectedRoute><OutcomePendingPage /></ProtectedRoute>} />
         <Route
           path="/ai-insights"
