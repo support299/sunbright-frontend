@@ -1,4 +1,4 @@
-﻿import {
+import {
   AlertTriangle,
   CheckCircle2,
   Clock,
@@ -26,7 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import { TOOLTIP_STYLE } from "../../../lib/chartTheme";
 import { formatDateShort } from "../../../lib/formatters";
-import { useDateFilter } from "../../../contexts/DateFilterContext";
+import { useDashboardFilters } from "../../../contexts/DashboardFiltersContext";
 import { useGetCustomerExperienceQuery } from "../api/dashboardApi";
 
 const STAGE_COLORS = ["#f59e0b", "#3b82f6", "#10b981", "#ef4444", "#8b5cf6"];
@@ -37,8 +37,10 @@ function fmt(v, decimals = 1) {
 }
 
 export default function CustomerExperiencePage() {
-  const { filterParams } = useDateFilter();
-  const { data: res, isLoading } = useGetCustomerExperienceQuery(filterParams);
+  const { filterParams } = useDashboardFilters();
+  const { data: res, isLoading } = useGetCustomerExperienceQuery(filterParams, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const bundle = res?.data || {};
   const overview = bundle.overview || {};
@@ -134,6 +136,39 @@ export default function CustomerExperiencePage() {
           value={overview.avgInstallToPtoApproved != null ? `${fmt(overview.avgInstallToPtoApproved)} days` : "-"}
           subtitle={`PTO submitted avg: ${fmt(overview.avgInstallToPtoSubmitted)} days`}
           icon={Clock}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+        <StatCard
+          title="Inspection Passed"
+          value={`${fmt(overview.inspectionPassedPct)}%`}
+          subtitle={`${Number(overview.inspectionPassedCount) || 0} of ${totalInstalls}`}
+          icon={CheckCircle2}
+        />
+        <StatCard
+          title="PTO Approved"
+          value={`${fmt(overview.ptoApprovedPct)}%`}
+          subtitle={`${Number(overview.ptoApprovedCount) || 0} of ${totalInstalls}`}
+          icon={CheckCircle2}
+        />
+        <StatCard
+          title="Reviews vs Goal"
+          value={`${reviewsCaptured} / ${Number(overview.goalReviews) || 0}`}
+          subtitle={`Need ${Number(overview.reviewGap) || 0} more`}
+          icon={Star}
+        />
+        <StatCard
+          title="Installs Without Inspection"
+          value={Number(overview.installsWithoutInspection) || 0}
+          subtitle="Open follow-ups"
+          icon={AlertTriangle}
+        />
+        <StatCard
+          title="Installs Without PTO"
+          value={Number(overview.installsWithoutPto) || 0}
+          subtitle="Pending approval"
+          icon={AlertTriangle}
         />
       </div>
 
