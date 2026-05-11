@@ -1,34 +1,42 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { useMemo } from "react";
+import {
+  DashboardFiltersProvider,
+  useDashboardFilters,
+} from "./DashboardFiltersContext";
 
-/** @typedef {{ from: string | null; to: string | null }} DateRange */
-
-/** @type {React.Context<null | { dateRange: DateRange; setDateRange: (r: DateRange) => void; clearDateRange: () => void; hasFilter: boolean; filterParams: { dateFrom: string | null; dateTo: string | null } }>} */
-const DateFilterContext = createContext(null);
+/**
+ * Backwards-compatible alias for the old date-only filter context.
+ *
+ * Pages that only care about `dateRange` / `setDateRange` / `clearDateRange`
+ * keep working unchanged. New pages should reach for `useDashboardFilters`
+ * directly so they can read installer / team / lead source / manager / market.
+ */
 
 export function DateFilterProvider({ children }) {
-  /** @type {[DateRange, React.Dispatch<React.SetStateAction<DateRange>>]} */
-  const [dateRange, setDateRange] = useState({ from: null, to: null });
-
-  const hasFilter = dateRange.from !== null || dateRange.to !== null;
-
-  const filterParams = useMemo(
-    () => ({ dateFrom: dateRange.from, dateTo: dateRange.to }),
-    [dateRange.from, dateRange.to]
-  );
-
-  const clearDateRange = () => setDateRange({ from: null, to: null });
-
-  const value = useMemo(
-    () => ({ dateRange, setDateRange, clearDateRange, hasFilter, filterParams }),
-    [dateRange, hasFilter, filterParams]
-  );
-
-  return <DateFilterContext.Provider value={value}>{children}</DateFilterContext.Provider>;
+  return <DashboardFiltersProvider>{children}</DashboardFiltersProvider>;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- hook co-located with provider
+// eslint-disable-next-line react-refresh/only-export-components -- legacy hook export
 export function useDateFilter() {
-  const ctx = useContext(DateFilterContext);
-  if (!ctx) throw new Error("useDateFilter must be used within DateFilterProvider");
-  return ctx;
+  const {
+    dateRange,
+    setDateRange,
+    clearDateRange,
+    hasFilter,
+    filterParams,
+  } = useDashboardFilters();
+  return useMemo(
+    () => ({
+      dateRange,
+      setDateRange: (range) => setDateRange(range || { from: null, to: null }),
+      clearDateRange,
+      hasFilter: Boolean(dateRange.from || dateRange.to),
+      // Legacy callers only know about `dateFrom` / `dateTo`. Continue to
+      // expose those, but bring the full filter set along too so any page
+      // can opportunistically forward the new dimensions.
+      filterParams,
+      _hasAnyFilter: hasFilter,
+    }),
+    [dateRange, setDateRange, clearDateRange, filterParams, hasFilter]
+  );
 }

@@ -46,10 +46,17 @@ export const dashboardApi = apiSlice.injectEndpoints({
     getCustomerExperience: builder.query({
       query: (filterParams) => dashboardQueryUrl("/cx/", filterParams),
       providesTags: ["Dashboard"],
+      keepUnusedDataFor: 30,
     }),
     getManagerPerformance: builder.query({
       query: (filterParams) => dashboardQueryUrl("/manager/", filterParams),
       providesTags: ["Dashboard"],
+      keepUnusedDataFor: 30,
+    }),
+    getRolePerformance: builder.query({
+      query: (filterParams) => dashboardQueryUrl("/role-performance/", filterParams),
+      providesTags: ["Dashboard"],
+      keepUnusedDataFor: 30,
     }),
     generateInsights: builder.mutation({
       query: (body) => ({
@@ -58,8 +65,32 @@ export const dashboardApi = apiSlice.injectEndpoints({
         body: body && typeof body === "object" ? body : {},
       }),
     }),
+    chatInsights: builder.mutation({
+      query: (body) => ({
+        url: "/insights/chat/",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["InsightChat"],
+    }),
+    getInsightConversations: builder.query({
+      query: () => "/insights/conversations/",
+      providesTags: ["InsightChat"],
+    }),
+    getInsightMessages: builder.query({
+      query: (conversationId) => `/insights/conversations/${conversationId}/messages/`,
+      providesTags: ["InsightChat"],
+    }),
     getSyncStatus: builder.query({ query: () => "/sync/", providesTags: ["Dashboard"] }),
     triggerSync: builder.mutation({ query: () => ({ url: "/sync/", method: "POST" }), invalidatesTags: ["Dashboard"] }),
+    getFilterOptions: builder.query({
+      query: () => "/dashboard/filter-options/",
+      providesTags: ["FilterOptions"],
+    }),
+    getMetricsRegistry: builder.query({
+      query: () => "/dashboard/metrics-registry/",
+      providesTags: ["MetricsRegistry"],
+    }),
   }),
 });
 
@@ -76,7 +107,13 @@ export const {
   useGetCancelledProjectsQuery,
   useGetCustomerExperienceQuery,
   useGetManagerPerformanceQuery,
+  useGetRolePerformanceQuery,
   useGenerateInsightsMutation,
+  useChatInsightsMutation,
+  useGetInsightConversationsQuery,
+  useGetInsightMessagesQuery,
   useGetSyncStatusQuery,
   useTriggerSyncMutation,
+  useGetFilterOptionsQuery,
+  useGetMetricsRegistryQuery,
 } = dashboardApi;
