@@ -1,4 +1,16 @@
-import { Activity, Clock3, Gauge, ShieldCheck, Timer, TrendingUp, UsersRound } from "lucide-react";
+import {
+  Activity,
+  AlertTriangle,
+  CheckCircle2,
+  Clock3,
+  Gauge,
+  PauseCircle,
+  ShieldCheck,
+  Timer,
+  TrendingDown,
+  TrendingUp,
+  UsersRound,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Bar,
@@ -90,6 +102,7 @@ export default function MasterDashboardPage() {
   const cleanDealRow = cleanAnalysis.find((row) => row.isCleanDeal === 1) || {};
   const notCleanDealRow = cleanAnalysis.find((row) => row.isCleanDeal === 0) || {};
   const totalDeals = Number(overview.totalProjects) || 0;
+  const onHoldCount = Number(overview.onHoldProjects) || 0;
 
   const statusPieData = categories.map((row) => ({
     name: row.project_category || "Unknown",
@@ -122,11 +135,6 @@ export default function MasterDashboardPage() {
     active: row.active,
     cancelled: row.cancelled,
     onHold: row.onHold,
-  }));
-
-  const dealsByStatusData = categories.map((row) => ({
-    name: row.project_category || "Unknown",
-    count: Number(row.count) || 0,
   }));
 
   const cancelReasonData = cancellationReasons
@@ -170,8 +178,8 @@ export default function MasterDashboardPage() {
           <h1 className="text-2xl font-bold text-foreground">Master Dashboard</h1>
           <p className="mt-1 text-muted-foreground">Loading consolidated metrics...</p>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
-          {[...Array(6)].map((_, i) => (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {[...Array(10)].map((_, i) => (
             <div key={i} className="h-28 animate-pulse rounded-xl border border-border bg-card" />
           ))}
         </div>
@@ -198,6 +206,33 @@ export default function MasterDashboardPage() {
         <StatCard title="Retention Rate" value={`${Number(overview.netRetentionRate) || 0}%`} subtitle="Net retention" icon={ShieldCheck} />
         <StatCard title="CRC Days" value={averages.avgDaysToCrc ?? "N/A"} subtitle="Avg sign to CRC" icon={Clock3} />
         <StatCard title="Install Days" value={averages.avgDaysToInstall ?? "N/A"} subtitle="Avg sign to install" icon={Timer} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Clean Deal Rate"
+          value={`${Number(overview.cleanDealPct) || 0}%`}
+          subtitle={`${Number(overview.cleanDeals) || 0} clean deals`}
+          icon={CheckCircle2}
+        />
+        <StatCard
+          title="Cancellation Rate"
+          value={`${Number(overview.cancellationRate) || 0}%`}
+          subtitle={`${Number(overview.cancelledProjects) || 0} projects cancelled`}
+          icon={TrendingDown}
+        />
+        <StatCard
+          title="On Hold Projects"
+          value={onHoldCount}
+          subtitle={totalDeals ? `${((onHoldCount / totalDeals) * 100).toFixed(1)}% of total` : "No projects in range"}
+          icon={PauseCircle}
+        />
+        <StatCard
+          title="Red Flagged"
+          value={Number(overview.redFlaggedProjects) || 0}
+          subtitle={`${Number(overview.disqualifiedProjects) || 0} disqualified`}
+          icon={AlertTriangle}
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -236,7 +271,7 @@ export default function MasterDashboardPage() {
         </ChartCard>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6">
         <ChartCard title="Deals by Lead Source" height={320}>
           <BarChart data={dealsByLeadSourceData}>
             <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.28 0.012 260)" />
@@ -247,16 +282,6 @@ export default function MasterDashboardPage() {
             <Bar dataKey="active" stackId="a" fill="#3b82f6" />
             <Bar dataKey="cancelled" stackId="a" fill="#ef4444" />
             <Bar dataKey="onHold" stackId="a" fill="#f59e0b" />
-          </BarChart>
-        </ChartCard>
-
-        <ChartCard title="Deals by Status" height={320}>
-          <BarChart data={dealsByStatusData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.28 0.012 260)" />
-            <XAxis dataKey="name" stroke="oklch(0.6 0.015 260)" tick={{ fontSize: 11 }} />
-            <YAxis stroke="oklch(0.6 0.015 260)" />
-            <Tooltip contentStyle={TOOLTIP_STYLE} />
-            <Bar dataKey="count" fill="#2563eb" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ChartCard>
       </div>

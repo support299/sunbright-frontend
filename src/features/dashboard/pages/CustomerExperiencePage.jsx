@@ -1,4 +1,4 @@
-﻿import {
+import {
   AlertTriangle,
   CheckCircle2,
   Clock,

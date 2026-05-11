@@ -37,8 +37,7 @@ export function DashboardFiltersProvider({ children }) {
 
   const setFilter = useCallback((key, value) => {
     if (!FILTER_KEYS.includes(key)) {
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
+      if (import.meta.env.DEV) {
         console.warn(`DashboardFilters: unknown filter "${key}"`);
       }
       return;

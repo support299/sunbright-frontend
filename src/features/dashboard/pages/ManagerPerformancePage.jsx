@@ -77,7 +77,7 @@ export default function ManagerPerformancePage() {
   const teamPerformance = bundle.teamPerformance;
   const doorStats = bundle.doorStats || {};
   const dealStageBreakdown = bundle.dealStageBreakdown || [];
-  const pmPerformance = bundle.pmPerformance || [];
+  const pmPerformance = useMemo(() => bundle.pmPerformance || [], [bundle.pmPerformance]);
   const pmKpis = bundle.pmKpis || {};
 
   const [viewMode, setViewMode] = useState("team");
@@ -132,7 +132,7 @@ export default function ManagerPerformancePage() {
   }));
 
   const pmStatusData = useMemo(() => {
-    return (pmPerformance || []).slice(0, 12).map((row) => ({
+    return pmPerformance.slice(0, 12).map((row) => ({
       name: shortenName(row.projectManager),
       full: row.projectManager,
       Active: Number(row.activeProjects) || 0,
@@ -144,7 +144,7 @@ export default function ManagerPerformancePage() {
   }, [pmPerformance]);
 
   const activeByPm = useMemo(() => {
-    return [...(pmPerformance || [])]
+    return [...pmPerformance]
       .sort((a, b) => Number(b.activeProjects || 0) - Number(a.activeProjects || 0))
       .slice(0, 12)
       .map((row) => ({
@@ -155,7 +155,7 @@ export default function ManagerPerformancePage() {
   }, [pmPerformance]);
 
   const cleanByPm = useMemo(() => {
-    return [...(pmPerformance || [])]
+    return [...pmPerformance]
       .sort((a, b) => Number(b.cleanDeals || 0) - Number(a.cleanDeals || 0))
       .slice(0, 12)
       .map((row) => ({
@@ -167,7 +167,7 @@ export default function ManagerPerformancePage() {
 
   const selectedRow = useMemo(() => {
     if (!selectedPm) return null;
-    return (pmPerformance || []).find((r) => r.projectManager === selectedPm) || null;
+    return pmPerformance.find((r) => r.projectManager === selectedPm) || null;
   }, [pmPerformance, selectedPm]);
 
   const o = managerOverview;

@@ -1,5 +1,5 @@
 import { AlertCircle, Plus, Send } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "../../../components/ui/button";
@@ -49,8 +49,11 @@ export default function AIInsightsPage() {
   const { data: messagesResponse } = useGetInsightMessagesQuery(activeConversationId, {
     skip: !activeConversationId,
   });
-  const messages = messagesResponse?.data || [];
-  const visibleMessages = activeConversationId ? messages : [];
+  const messages = messagesResponse?.data;
+  const visibleMessages = useMemo(
+    () => (activeConversationId ? messages || [] : []),
+    [activeConversationId, messages]
+  );
   const bottomAnchorRef = useRef(null);
   const pageContainerRef = useRef(null);
   const [composerBounds, setComposerBounds] = useState({ left: 16, width: 0 });

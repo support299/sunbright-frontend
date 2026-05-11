@@ -119,8 +119,12 @@ function FunnelTab({ funnel }) {
     );
   }
 
-  const activeStages = funnel.filter((s) => !s.muted);
-  const exitStages = funnel.filter((s) => s.muted);
+  const normalizedFunnel = funnel.map((s) => ({
+    ...s,
+    label: s.label || s.stage || s.name || "",
+  }));
+  const activeStages = normalizedFunnel.filter((s) => !s.muted);
+  const exitStages = normalizedFunnel.filter((s) => s.muted);
 
   return (
     <div className="space-y-6">
@@ -142,14 +146,28 @@ function FunnelTab({ funnel }) {
         </div>
       ) : null}
 
-      <ChartCard title="Stage distribution" height={320}>
-        <BarChart data={funnel.map((s) => ({ name: s.label, count: s.count }))}>
+      <ChartCard title="Stage distribution" height={360}>
+        <BarChart
+          data={normalizedFunnel.map((s) => ({ name: s.label, count: s.count }))}
+          margin={{ top: 12, right: 16, bottom: 72, left: 8 }}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.28 0.012 260)" />
-          <XAxis dataKey="name" stroke="oklch(0.6 0.015 260)" tick={{ fontSize: 11 }} />
+          <XAxis
+            dataKey="name"
+            stroke="oklch(0.6 0.015 260)"
+            interval={0}
+            angle={-35}
+            textAnchor="end"
+            tick={{ fontSize: 11, fill: "oklch(0.72 0.015 260)" }}
+          />
           <YAxis stroke="oklch(0.6 0.015 260)" />
-          <Tooltip contentStyle={TOOLTIP_STYLE} />
+          <Tooltip
+            contentStyle={TOOLTIP_STYLE}
+            formatter={(v) => [v, "Projects"]}
+            labelFormatter={(label) => `Stage: ${label}`}
+          />
           <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-            {funnel.map((s, i) => (
+            {normalizedFunnel.map((s, i) => (
               <Cell key={i} fill={s.muted ? "#64748b" : STAGE_COLORS[i % STAGE_COLORS.length]} />
             ))}
           </Bar>

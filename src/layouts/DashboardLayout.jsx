@@ -35,7 +35,6 @@ const SIDEBAR_COLLAPSED_KEY = "sunbright-sidebar-collapsed";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Master Dashboard", path: "/" },
-  { icon: LayoutDashboard, label: "Executive Overview", path: "/executive-overview" },
   { icon: Sparkles, label: "Clean Deals", path: "/clean-deals" },
   { icon: ShieldAlert, label: "Retention", path: "/retention" },
   { icon: Users, label: "Rep Performance", path: "/rep-performance" },

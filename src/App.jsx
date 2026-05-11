@@ -6,7 +6,6 @@ import CancellationsPage from "./features/dashboard/pages/CancellationsPage";
 import CleanDealsPage from "./features/dashboard/pages/CleanDealsPage";
 import CustomerExperiencePage from "./features/dashboard/pages/CustomerExperiencePage";
 import DataSyncPage from "./features/dashboard/pages/DataSyncPage";
-import HomePage from "./features/dashboard/pages/HomePage";
 import ManagerPerformancePage from "./features/dashboard/pages/ManagerPerformancePage";
 import RolePerformancePage from "./features/dashboard/pages/RolePerformancePage";
 import MasterDashboardPage from "./features/dashboard/pages/MasterDashboardPage";
@@ -26,7 +25,7 @@ function App() {
       <Route path="/auth/login" element={<LoginPage />} />
       <Route element={<DashboardLayout />}>
         <Route path="/" element={<ProtectedRoute><MasterDashboardPage /></ProtectedRoute>} />
-        <Route path="/executive-overview" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/executive-overview" element={<ProtectedRoute><Navigate to="/" replace /></ProtectedRoute>} />
         <Route path="/clean-deals" element={<ProtectedRoute><CleanDealsPage /></ProtectedRoute>} />
         <Route path="/retention" element={<ProtectedRoute><RetentionPage /></ProtectedRoute>} />
         <Route path="/rep-performance" element={<ProtectedRoute><RepPerformancePage /></ProtectedRoute>} />
