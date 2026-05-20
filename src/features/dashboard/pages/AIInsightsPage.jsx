@@ -38,7 +38,7 @@ function emphasizeNumbers(text) {
 }
 
 export default function AIInsightsPage() {
-  const { filterParams, hasFilter } = useDateFilter();
+  const { filterParams, _hasAnyFilter } = useDateFilter();
   const [chatInsights, { isLoading: isChatLoading }] = useChatInsightsMutation();
   const [chatMessage, setChatMessage] = useState("");
   const [chatError, setChatError] = useState(null);
@@ -93,6 +93,12 @@ export default function AIInsightsPage() {
       if (activeConversationId) body.conversationId = activeConversationId;
       if (filterParams?.dateFrom) body.dateFrom = filterParams.dateFrom;
       if (filterParams?.dateTo) body.dateTo = filterParams.dateTo;
+      if (filterParams?.salesTeam) body.salesTeam = filterParams.salesTeam;
+      if (filterParams?.installer) body.installer = filterParams.installer;
+      if (filterParams?.leadSource) body.leadSource = filterParams.leadSource;
+      if (filterParams?.manager) body.manager = filterParams.manager;
+      if (filterParams?.repKind) body.repKind = filterParams.repKind;
+      if (filterParams?.repName) body.repName = filterParams.repName;
       const response = await chatInsights(body).unwrap();
       if (!activeConversationId && response?.data?.conversationId) {
         setActiveConversationId(response.data.conversationId);
@@ -122,7 +128,9 @@ export default function AIInsightsPage() {
         <h1 className="text-2xl font-semibold text-foreground">AI Assistant</h1>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
           Ask anything about your dashboard metrics, trends, performance, and anomalies.
-          {hasFilter ? " Responses respect the date filter in the header." : " Responses use all available data unless you apply a date filter."}
+          {_hasAnyFilter
+            ? " Responses respect the global filters in the header (dates, team, manager, rep, etc.)."
+            : " Responses use all available data unless you apply filters in the header."}
         </p>
       </div>
 

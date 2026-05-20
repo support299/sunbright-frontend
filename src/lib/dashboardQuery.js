@@ -15,6 +15,8 @@ const PARAM_MAP = [
   ["leadSource", "lead_source"],
   ["manager", "manager"],
   ["market", "market"],
+  ["repKind", "rep_kind"],
+  ["repName", "rep_name"],
 ];
 
 export function dashboardQueryUrl(path, filterParams) {

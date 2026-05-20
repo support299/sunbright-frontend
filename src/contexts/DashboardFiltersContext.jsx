@@ -19,6 +19,8 @@ const EMPTY_FILTERS = Object.freeze({
   leadSource: null,
   manager: null,
   market: null,
+  repKind: null,
+  repName: null,
 });
 
 const FILTER_KEYS = Object.keys(EMPTY_FILTERS);
