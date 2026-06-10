@@ -138,7 +138,7 @@ export default function DataSyncPage() {
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">Daily Sync</span>
               </div>
-              <Pill tone="primary">10:00 AM EST</Pill>
+              <Pill tone="primary">10:00 AM & 8:00 PM EST</Pill>
             </div>
             <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
               <div className="flex items-center gap-2">
